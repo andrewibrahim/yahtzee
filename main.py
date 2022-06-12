@@ -44,11 +44,11 @@ class Hand:
   def roll(self):
     self.dice_total = 0
         
-    self.dice[0].value = 1
-    self.dice[1].value = 4
-    self.dice[2].value = 3
-    self.dice[3].value = 2
-    self.dice[4].value = 4
+    self.dice[0].value = 2
+    self.dice[1].value = 1
+    self.dice[2].value = 4
+    self.dice[3].value = 5
+    self.dice[4].value = 3
     
     for x in range(self.dice_count):
 #      self.dice[x].roll()
@@ -129,19 +129,28 @@ class Hand:
   def calcSmStraight(self):
     calcVal = 30
 
-    count = 0
-    for x in range(1,6):
+    count = 1
+    for x in range(0, len(self.dice)-1):
       if (self.dice[x].value + 1) == self.dice[x+1].value:
         count = count + 1
-      else:
-        count = 0
-        
+
     if count >= 4:
       return calcVal
     else:
       return 0
     
-  
+  def calcLgStraight(self):
+    calcVal = 40
+
+    count = 1
+    for x in range(0, len(self.dice)-1):
+      if (self.dice[x].value + 1) == self.dice[x+1].value:
+        count = count + 1
+
+    if count == 5:
+      return calcVal
+    else:
+      return 0
   
   def calcFiveOfaKind(self):
     count = 0
@@ -181,7 +190,7 @@ class Hand:
     elif row == "j":
       return self.calcSmStraight()
     elif row == "k":
-      return self.calcFourOfaKind()
+      return self.calcLgStraight()
     elif row == "l":
       return self.calcFiveOfaKind()
     elif row == "m":
