@@ -38,7 +38,7 @@ class Hand:
     self.rolls_count = 0
     self.dice = []
     for x in range(self.dice_count):
-      self.dice.append(Dice(5))
+      self.dice.append(Dice(6))
     return
 
   def roll(self):
@@ -104,9 +104,9 @@ class Player:
     print("\nPlayer " + self.name + " turn starting!")
     self.hand.roll_count = 0
     self.hand.reset()
-    command = "Y"
+    command = "R"
     while (self.hand.roll_count <= self.hand.max_rolls):
-      if command == "Y":
+      if command == "R" or command == "r":
         if self.hand.roll_count < self.hand.max_rolls:
           self.hand.roll()
           self.hand.roll_count = self.hand.roll_count + 1
@@ -151,10 +151,7 @@ class Player:
       if self.hand.roll_count <= self.hand.max_rolls:
         self.score.toString(self.hand)
         print("You have " + str(self.hand.max_rolls - self.hand.roll_count) + " rolls remaining.")
-        command = input('Roll again? (Y)es or (N)o: ' )
-        if command == "N":
-          print("End of turn!")
-          break
+        command = input('(R)oll or (a-f): ' )
 
     self.score.toString(self.hand)
     
@@ -166,6 +163,7 @@ class Score:
     self.upper_fours = -1
     self.upper_fives = -1
     self.upper_sixes = -1
+    self.upper_bonus = 35
 
   def formatScore(self, row, num, hand):
     if num < 0:
@@ -196,6 +194,12 @@ class Score:
   def calcTotalScore(self):
     total = self.calcScore(self.upper_aces) + self.calcScore(self.upper_twos) + self.calcScore(self.upper_threes) + self.calcScore(self.upper_fours) + self.calcScore(self.upper_fives) + self.calcScore(self.upper_sixes)
     return total
+
+  def calcUpperBonus(self):
+    if self.calcTotalScore() >= 63:
+      return self.upper_bonus
+    else:
+      return 0
     
   def toString(self, hand):
     print("-------------------------------------")
@@ -207,6 +211,8 @@ class Score:
     print("[f] sixes:  " + self.formatScore("f", self.upper_sixes, hand))
     print("-------------------------------------")
     print("Total:      " + str(self.calcTotalScore()))
+    print("bonus:      " + str(self.calcUpperBonus()))
+    print("Up Total:   " + str(self.calcTotalScore() + self.calcUpperBonus()))
     print("-------------------------------------")
     
 
