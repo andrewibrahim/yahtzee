@@ -146,8 +146,7 @@ class Player:
         self.score.setScore("f",self.hand.calcRow(command))
         break
       else:
-        print("End of turn!")
-        break
+        print("Please enter a valid input.")
         
       if self.hand.roll_count <= self.hand.max_rolls:
         self.score.toString(self.hand)
@@ -187,8 +186,17 @@ class Score:
       self.upper_fives = val
     elif row == "f":
       self.upper_sixes = val
-      
+
+  def calcScore(self, val):
+    if val < 0:
+      return 0
+    else:
+      return val
   
+  def calcTotalScore(self):
+    total = self.calcScore(self.upper_aces) + self.calcScore(self.upper_twos) + self.calcScore(self.upper_threes) + self.calcScore(self.upper_fours) + self.calcScore(self.upper_fives) + self.calcScore(self.upper_sixes)
+    return total
+    
   def toString(self, hand):
     print("-------------------------------------")
     print("[a] aces:   " + self.formatScore("a", self.upper_aces, hand))
@@ -197,6 +205,8 @@ class Score:
     print("[d] fours:  " + self.formatScore("d", self.upper_fours, hand))
     print("[e] fives:  " + self.formatScore("e", self.upper_fives, hand))
     print("[f] sixes:  " + self.formatScore("f", self.upper_sixes, hand))
+    print("-------------------------------------")
+    print("Total:      " + str(self.calcTotalScore()))
     print("-------------------------------------")
     
 
@@ -211,12 +221,14 @@ def main():
 
   while True:
     command = input('Enter your command (R)ound or e(X)it: ' )
-    if command == "X":
+    if command == "X" or command == "x":
       print("Thanks for playing!")
       break   
-      
-    for z in range(player_count):
-      players[z].turn()
+    elif command == "R" or command == "r":  
+      for z in range(player_count):
+        players[z].turn()
+    else:
+      print("Please enter a valid input.")
 
 def random_number():
   x = random.randint(0,6)
