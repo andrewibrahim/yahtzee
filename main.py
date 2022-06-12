@@ -210,6 +210,9 @@ class Score:
     self.upper_bonus = 35
     self.lower_three = -1
     self.lower_four = -1
+    self.lower_house = -1
+    self.lower_small = -1
+    self.lower_large = -1
     self.lower_yahtzee = -1
     self.lower_chance = -1
 
@@ -247,15 +250,20 @@ class Score:
     else:
       return val
   
-  def calcTotalScore(self):
+  def calcUpperTotalScore(self):
     total = self.calcScore(self.upper_aces) + self.calcScore(self.upper_twos) + self.calcScore(self.upper_threes) + self.calcScore(self.upper_fours) + self.calcScore(self.upper_fives) + self.calcScore(self.upper_sixes)
     return total
 
   def calcUpperBonus(self):
-    if self.calcTotalScore() >= 63:
+    if self.calcUpperTotalScore() >= 63:
       return self.upper_bonus
     else:
       return 0
+  
+  def calcLowerTotal(self):
+    total = self.calcScore(self.lower_three) + self.calcScore(self.lower_four) + self.calcScore(self.lower_house) + self.calcScore(self.lower_small) + self.calcScore(self.lower_large) + self.calcScore(self.lower_yahtzee) + self.calcScore(self.lower_chance)
+    return total
+  
     
   def toString(self, hand):
     print("-------------------------------------")
@@ -266,14 +274,19 @@ class Score:
     print("[e] Fives:       " + self.formatScore("e", self.upper_fives, hand))
     print("[f] Sixes:       " + self.formatScore("f", self.upper_sixes, hand))
     print("-------------------------------------")
-    print("Total:           " + str(self.calcTotalScore()))
+    print("Total:           " + str(self.calcUpperTotalScore()))
     print("Bonus:           " + str(self.calcUpperBonus()))
-    print("Up Total:        " + str(self.calcTotalScore() + self.calcUpperBonus()))
+    print("Upper Total:     " + str(self.calcUpperTotalScore() + self.calcUpperBonus()))
     print("-------------------------------------")
     print("[g] 3 of a kind: " + self.formatScore("g", self.lower_three, hand) )
     print("[h] 4 of a kind: " + self.formatScore("h", self.lower_four, hand))
     print("[l] YAHTZEE!:    " + self.formatScore("l", self.lower_yahtzee, hand))
     print("[m] Chance:      " + self.formatScore("m", self.lower_chance, hand) )
+    print("-------------------------------------")
+    print("Lower Total:     " + str(self.calcLowerTotal()))
+    print("Upper Total:     " + str(self.calcUpperTotalScore() + self.calcUpperBonus()))
+    print("Grand Total:     " + str(self.calcLowerTotal() + self.calcUpperTotalScore() + self.calcUpperBonus()))
+    print("-------------------------------------")
 
     
 
