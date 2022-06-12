@@ -58,7 +58,30 @@ class Hand:
   def reset(self):
     for x in range(self.dice_count):
       self.dice[x].keep = False
- 
+
+  def calcScore(self, val):
+    calcVal = 0
+    for x in range(self.dice_count):
+      if self.dice[x].toValue() == val:
+        calcVal = calcVal + val
+    return calcVal
+
+  def calcRow(self, row):
+    if row == "a":
+      return self.calcScore(1)
+    elif row == "b":
+      return self.calcScore(2)
+    elif row == "c":
+      return self.calcScore(3)
+    elif row == "d":
+      return self.calcScore(4)
+    elif row == "e":
+      return self.calcScore(5)
+    elif row == "f":
+      return self.calcScore(6)
+    else:
+      return 100
+
 
 class Player:
 
@@ -66,6 +89,8 @@ class Player:
     self.total = 0
     self.name = namePassed
     self.hand = Hand()
+    self.score = Score()
+    
     return
 
   def addScore(self, s):
@@ -80,10 +105,13 @@ class Player:
     self.hand.roll_count = 0
     self.hand.reset()
     command = "Y"
-    while (self.hand.roll_count < self.hand.max_rolls):
+    while (self.hand.roll_count <= self.hand.max_rolls):
       if command == "Y":
-        self.hand.roll()
-        self.hand.roll_count = self.hand.roll_count + 1
+        if self.hand.roll_count < self.hand.max_rolls:
+          self.hand.roll()
+          self.hand.roll_count = self.hand.roll_count + 1
+        else:
+          print("No rolls left.")
       elif command == "1":
         self.hand.dice[0].toggle()
         self.hand.toString()
@@ -99,16 +127,78 @@ class Player:
       elif command == "5":
         self.hand.dice[4].toggle()
         self.hand.toString()
+      elif command == "a":
+        self.score.setScore("a",self.hand.calcRow(command))
+        break
+      elif command == "b":
+        self.score.setScore("b",self.hand.calcRow(command))
+        break
+      elif command == "c":
+        self.score.setScore("c",self.hand.calcRow(command))
+        break
+      elif command == "d":
+        self.score.setScore("d",self.hand.calcRow(command))
+        break
+      elif command == "e":
+        self.score.setScore("e",self.hand.calcRow(command))
+        break
+      elif command == "f":
+        self.score.setScore("f",self.hand.calcRow(command))
+        break
       else:
         print("End of turn!")
         break
         
-      if self.hand.roll_count < self.hand.max_rolls:
+      if self.hand.roll_count <= self.hand.max_rolls:
+        self.score.toString(self.hand)
         print("You have " + str(self.hand.max_rolls - self.hand.roll_count) + " rolls remaining.")
         command = input('Roll again? (Y)es or (N)o: ' )
         if command == "N":
           print("End of turn!")
           break
+
+    self.score.toString(self.hand)
+    
+class Score:
+  def __init__(self):
+    self.upper_aces = -1
+    self.upper_twos = -1
+    self.upper_threes = -1
+    self.upper_fours = -1
+    self.upper_fives = -1
+    self.upper_sixes = -1
+
+  def formatScore(self, row, num, hand):
+    if num < 0:
+      return "+" + str(hand.calcRow(row))
+    else:
+      return str(num)
+
+  def setScore(self, row, val):
+    if row == "a":
+      self.upper_aces = val
+    elif row == "b":
+      self.upper_twos = val
+    elif row == "c":
+      self.upper_threes = val
+    elif row == "d":
+      self.upper_fours = val
+    elif row == "e":
+      self.upper_fives = val
+    elif row == "f":
+      self.upper_sixes = val
+      
+  
+  def toString(self, hand):
+    print("-------------------------------------")
+    print("[a] aces:   " + self.formatScore("a", self.upper_aces, hand))
+    print("[b] twos:   " + self.formatScore("b", self.upper_twos, hand))
+    print("[c] threes: " + self.formatScore("c", self.upper_threes, hand))
+    print("[d] fours:  " + self.formatScore("d", self.upper_fours, hand))
+    print("[e] fives:  " + self.formatScore("e", self.upper_fives, hand))
+    print("[f] sixes:  " + self.formatScore("f", self.upper_sixes, hand))
+    print("-------------------------------------")
+    
 
 def main():
   print("Welcome to the Yahtzee game!")
