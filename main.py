@@ -40,16 +40,26 @@ class Hand:
     for x in range(self.dice_count):
       self.dice.append(Dice(6))
     return
-
+  
   def roll(self):
     self.dice_total = 0
+        
+    self.dice[0].value = 1
+    self.dice[1].value = 4
+    self.dice[2].value = 3
+    self.dice[3].value = 2
+    self.dice[4].value = 4
+    
     for x in range(self.dice_count):
-      self.dice[x].roll()
+#      self.dice[x].roll()
       self.dice_total = self.dice_total + self.dice[x].toValue()
-      
+
+    self.dice.sort(key = lambda x: x.value)
+    
     self.toString()
     return
 
+  
   def toString(self):
     print("\n")
     for x in range(self.dice_count):
@@ -101,6 +111,38 @@ class Hand:
       
     return 0
 
+  def calcFullHouse(self):
+    calcVal = 25
+
+    count = 0
+    for x in range(1,7):
+      count = self.countValue(x)
+      if count == 3:
+        count2 = 0
+        for y in range(1,7):
+          count2 = self.countValue(y)
+          if count2 == 2 and x != y:
+            return calcVal
+    
+    return 0
+
+  def calcSmStraight(self):
+    calcVal = 30
+
+    count = 0
+    for x in range(1,6):
+      if (self.dice[x].value + 1) == self.dice[x+1].value:
+        count = count + 1
+      else:
+        count = 0
+        
+    if count >= 4:
+      return calcVal
+    else:
+      return 0
+    
+  
+  
   def calcFiveOfaKind(self):
     count = 0
     for x in range(1,7):
@@ -133,6 +175,12 @@ class Hand:
     elif row == "g":
       return self.calcThreeOfaKind()
     elif row == "h":
+      return self.calcFourOfaKind()
+    elif row == "i":
+      return self.calcFullHouse()
+    elif row == "j":
+      return self.calcSmStraight()
+    elif row == "k":
       return self.calcFourOfaKind()
     elif row == "l":
       return self.calcFiveOfaKind()
@@ -186,7 +234,7 @@ class Player:
       elif command == "5":
         self.hand.dice[4].toggle()
         self.hand.toString()
-      elif (command in "abcdefghlm") and len(command) == 1:
+      elif (command in "abcdefghijklm") and len(command) == 1:
         self.score.setScore(command,self.hand.calcRow(command))
         break
       else:
@@ -239,6 +287,12 @@ class Score:
       self.lower_three = val
     elif row == "h":
       self.lower_four = val
+    elif row == "i":
+      self.lower_house = val
+    elif row == "j":
+      self.lower_small = val
+    elif row == "k":
+      self.lower_large = val
     elif row == "l":
       self.lower_yahtzee = val
     elif row == "m":
@@ -280,6 +334,9 @@ class Score:
     print("-------------------------------------")
     print("[g] 3 of a kind: " + self.formatScore("g", self.lower_three, hand) )
     print("[h] 4 of a kind: " + self.formatScore("h", self.lower_four, hand))
+    print("[i] Full House:  " + self.formatScore("i", self.lower_house, hand))
+    print("[j] Sm Straight: " + self.formatScore("j", self.lower_small, hand))
+    print("[k] Lg Straight: " + self.formatScore("k", self.lower_large, hand))
     print("[l] YAHTZEE!:    " + self.formatScore("l", self.lower_yahtzee, hand))
     print("[m] Chance:      " + self.formatScore("m", self.lower_chance, hand) )
     print("-------------------------------------")
