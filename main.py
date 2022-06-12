@@ -44,14 +44,14 @@ class Hand:
   def roll(self):
     self.dice_total = 0
         
-    self.dice[0].value = 2
-    self.dice[1].value = 1
-    self.dice[2].value = 4
-    self.dice[3].value = 5
-    self.dice[4].value = 3
+    #self.dice[0].value = 2
+    #self.dice[1].value = 1
+    #self.dice[2].value = 4
+    #self.dice[3].value = 5
+    #self.dice[4].value = 3
     
     for x in range(self.dice_count):
-#      self.dice[x].roll()
+      self.dice[x].roll()
       self.dice_total = self.dice_total + self.dice[x].toValue()
 
     self.dice.sort(key = lambda x: x.value)
