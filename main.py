@@ -51,6 +51,7 @@ class Hand:
     return
 
   def toString(self):
+    print("\n")
     for x in range(self.dice_count):
       print('Your Dice ' + str(x + 1) + ' is: ' + self.dice[x].toString() )
     return
@@ -66,6 +67,56 @@ class Hand:
         calcVal = calcVal + val
     return calcVal
 
+  def countValue(self,val):
+    countVal = 0
+    for x in range(self.dice_count):
+      if self.dice[x].toValue() == val:
+        countVal = countVal + 1
+    return countVal
+
+  
+  def calcThreeOfaKind(self):
+    calcVal = 0
+    for x in range(self.dice_count):
+        calcVal = calcVal + self.dice[x].value
+
+    count = 0
+    for x in range(1,7):
+      count = self.countValue(x)
+      if count >= 3:
+        return calcVal
+      
+    return 0
+
+  def calcFourOfaKind(self):
+    calcVal = 0
+    for x in range(self.dice_count):
+        calcVal = calcVal + self.dice[x].value
+
+    count = 0
+    for x in range(1,7):
+      count = self.countValue(x)
+      if count >= 4:
+        return calcVal
+      
+    return 0
+
+  def calcFiveOfaKind(self):
+    count = 0
+    for x in range(1,7):
+      count = self.countValue(x)
+      if count == 5:
+        return 50
+      
+    return 0
+
+  
+  def calcChance(self):
+    calcVal = 0
+    for x in range(self.dice_count):
+        calcVal = calcVal + self.dice[x].value
+    return calcVal
+  
   def calcRow(self, row):
     if row == "a":
       return self.calcScore(1)
@@ -79,6 +130,14 @@ class Hand:
       return self.calcScore(5)
     elif row == "f":
       return self.calcScore(6)
+    elif row == "g":
+      return self.calcThreeOfaKind()
+    elif row == "h":
+      return self.calcFourOfaKind()
+    elif row == "l":
+      return self.calcFiveOfaKind()
+    elif row == "m":
+      return self.calcChance()
     else:
       return 100
 
@@ -127,23 +186,8 @@ class Player:
       elif command == "5":
         self.hand.dice[4].toggle()
         self.hand.toString()
-      elif command == "a":
-        self.score.setScore("a",self.hand.calcRow(command))
-        break
-      elif command == "b":
-        self.score.setScore("b",self.hand.calcRow(command))
-        break
-      elif command == "c":
-        self.score.setScore("c",self.hand.calcRow(command))
-        break
-      elif command == "d":
-        self.score.setScore("d",self.hand.calcRow(command))
-        break
-      elif command == "e":
-        self.score.setScore("e",self.hand.calcRow(command))
-        break
-      elif command == "f":
-        self.score.setScore("f",self.hand.calcRow(command))
+      elif (command in "abcdefghlm") and len(command) == 1:
+        self.score.setScore(command,self.hand.calcRow(command))
         break
       else:
         print("Please enter a valid input.")
@@ -151,7 +195,7 @@ class Player:
       if self.hand.roll_count <= self.hand.max_rolls:
         self.score.toString(self.hand)
         print("You have " + str(self.hand.max_rolls - self.hand.roll_count) + " rolls remaining.")
-        command = input('(R)oll or (a-f): ' )
+        command = input('(R)oll or (a-m): ' )
 
     self.score.toString(self.hand)
     
@@ -164,6 +208,10 @@ class Score:
     self.upper_fives = -1
     self.upper_sixes = -1
     self.upper_bonus = 35
+    self.lower_three = -1
+    self.lower_four = -1
+    self.lower_yahtzee = -1
+    self.lower_chance = -1
 
   def formatScore(self, row, num, hand):
     if num < 0:
@@ -184,6 +232,14 @@ class Score:
       self.upper_fives = val
     elif row == "f":
       self.upper_sixes = val
+    elif row == "g":
+      self.lower_three = val
+    elif row == "h":
+      self.lower_four = val
+    elif row == "l":
+      self.lower_yahtzee = val
+    elif row == "m":
+      self.lower_chance = val
 
   def calcScore(self, val):
     if val < 0:
@@ -203,17 +259,22 @@ class Score:
     
   def toString(self, hand):
     print("-------------------------------------")
-    print("[a] aces:   " + self.formatScore("a", self.upper_aces, hand))
-    print("[b] twos:   " + self.formatScore("b", self.upper_twos, hand))
-    print("[c] threes: " + self.formatScore("c", self.upper_threes, hand))
-    print("[d] fours:  " + self.formatScore("d", self.upper_fours, hand))
-    print("[e] fives:  " + self.formatScore("e", self.upper_fives, hand))
-    print("[f] sixes:  " + self.formatScore("f", self.upper_sixes, hand))
+    print("[a] Aces:        " + self.formatScore("a", self.upper_aces, hand))
+    print("[b] Twos:        " + self.formatScore("b", self.upper_twos, hand))
+    print("[c] Threes:      " + self.formatScore("c", self.upper_threes, hand))
+    print("[d] Fours:       " + self.formatScore("d", self.upper_fours, hand))
+    print("[e] Fives:       " + self.formatScore("e", self.upper_fives, hand))
+    print("[f] Sixes:       " + self.formatScore("f", self.upper_sixes, hand))
     print("-------------------------------------")
-    print("Total:      " + str(self.calcTotalScore()))
-    print("bonus:      " + str(self.calcUpperBonus()))
-    print("Up Total:   " + str(self.calcTotalScore() + self.calcUpperBonus()))
+    print("Total:           " + str(self.calcTotalScore()))
+    print("Bonus:           " + str(self.calcUpperBonus()))
+    print("Up Total:        " + str(self.calcTotalScore() + self.calcUpperBonus()))
     print("-------------------------------------")
+    print("[g] 3 of a kind: " + self.formatScore("g", self.lower_three, hand) )
+    print("[h] 4 of a kind: " + self.formatScore("h", self.lower_four, hand))
+    print("[l] YAHTZEE!:    " + self.formatScore("l", self.lower_yahtzee, hand))
+    print("[m] Chance:      " + self.formatScore("m", self.lower_chance, hand) )
+
     
 
 def main():
