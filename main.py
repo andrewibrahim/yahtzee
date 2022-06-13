@@ -244,8 +244,8 @@ class Player:
         self.hand.dice[4].toggle()
         self.hand.toString()
       elif (command in "abcdefghijklm") and len(command) == 1:
-        self.score.setScore(command,self.hand.calcRow(command))
-        break
+        if self.score.setScore(command,self.hand.calcRow(command)):
+          break
       else:
         print("Please enter a valid input.")
         
@@ -280,32 +280,47 @@ class Score:
       return str(num)
 
   def setScore(self, row, val):
-    if row == "a":
+    if row == "a" and self.upper_aces < 0:
       self.upper_aces = val
-    elif row == "b":
+      return True
+    elif row == "b" and self.upper_twos < 0:
       self.upper_twos = val
-    elif row == "c":
+      return True
+    elif row == "c" and self.upper_threes < 0:
       self.upper_threes = val
-    elif row == "d":
+      return True
+    elif row == "d" and self.upper_fours < 0:
       self.upper_fours = val
-    elif row == "e":
+      return True
+    elif row == "e" and self.upper_fives < 0:
       self.upper_fives = val
-    elif row == "f":
+      return True
+    elif row == "f" and self.upper_sixes < 0:
       self.upper_sixes = val
-    elif row == "g":
+      return True
+    elif row == "g" and self.lower_three < 0:
       self.lower_three = val
-    elif row == "h":
+      return True
+    elif row == "h" and self.lower_four < 0:
       self.lower_four = val
-    elif row == "i":
+      return True
+    elif row == "i" and self.lower_house < 0:
       self.lower_house = val
-    elif row == "j":
+      return True
+    elif row == "j" and self.lower_small < 0:
       self.lower_small = val
-    elif row == "k":
+      return True
+    elif row == "k" and self.lower_large < 0:
       self.lower_large = val
-    elif row == "l":
+      return True
+    elif row == "l" and self.lower_yahtzee < 0:
       self.lower_yahtzee = val
-    elif row == "m":
+      return True
+    elif row == "m" and self.lower_chance < 0:
       self.lower_chance = val
+      return True
+    else:
+      return False
 
   def calcScore(self, val):
     if val < 0:
